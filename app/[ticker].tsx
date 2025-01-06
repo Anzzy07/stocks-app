@@ -1,13 +1,12 @@
-import { StyleSheet, View, Pressable } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 
-export default function TabOneScreen() {
+export default function TickerScreen() {
+  const { ticker } = useLocalSearchParams();
   return (
-    <View>
-      <Pressable onPress={() => router.push("/AAPL")}>
-        <Text>Press Me</Text>
-      </Pressable>
+    <View style={styles.container}>
+      <Text>{ticker}</Text>
     </View>
   );
 }

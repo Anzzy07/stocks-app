@@ -8,6 +8,7 @@ import "react-native-reanimated";
 import { PaperProvider, TextInput } from "react-native-paper";
 import { createContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { theme } from "@/theme";
 import { SearchableStock } from "@/data";
@@ -108,29 +109,31 @@ function RootLayoutNav() {
             updateLikedStocks,
           }}
         >
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="search"
-              options={{
-                headerTitle: () => (
-                  <TextInput
-                    mode="outlined"
-                    placeholder="Search Stocks..."
-                    autoFocus
-                    dense
-                    style={{ width: "88%" }}
-                    onChangeText={(text: string) => {
-                      setSearchQuery(text);
-                      const stocks = searchStocks(text);
-                      setSearchedStocks(stocks);
-                    }}
-                  />
-                ),
-              }}
-            />
-            <Stack.Screen name="[ticker]" options={{ headerShown: false }} />
-          </Stack>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="search"
+                options={{
+                  headerTitle: () => (
+                    <TextInput
+                      mode="outlined"
+                      placeholder="Search Stocks..."
+                      autoFocus
+                      dense
+                      style={{ width: "88%" }}
+                      onChangeText={(text: string) => {
+                        setSearchQuery(text);
+                        const stocks = searchStocks(text);
+                        setSearchedStocks(stocks);
+                      }}
+                    />
+                  ),
+                }}
+              />
+              <Stack.Screen name="[ticker]" options={{ headerShown: false }} />
+            </Stack>
+          </GestureHandlerRootView>
         </StoreContext.Provider>
       </ThemeProvider>
     </PaperProvider>

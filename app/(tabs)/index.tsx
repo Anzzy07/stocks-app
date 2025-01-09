@@ -1,30 +1,32 @@
-import { StyleSheet, View, Pressable } from "react-native";
+import { View, FlatList, useWindowDimensions } from "react-native";
 import { Text } from "react-native-paper";
-import { router } from "expo-router";
 
-export default function TabOneScreen() {
+import { stocks } from "@/data";
+import { StockCard } from "@/components/StockCard";
+
+export default function HomeScreen() {
   return (
-    <View>
-      <Pressable onPress={() => router.push("/AAPL")}>
-        <Text>Press Me</Text>
-      </Pressable>
+    <View style={{ flex: 1, paddingTop: 30 }}>
+      <Text
+        variant="titleLarge"
+        style={{ fontWeight: "bold", marginLeft: 5, marginBottom: 5 }}
+      >
+        Available Stocks
+      </Text>
+      <FlatList
+        keyExtractor={(item) => item.ticker}
+        data={stocks}
+        renderItem={({ item }) => (
+          <StockCard
+            companyName={item.companyName}
+            image={item.image}
+            price={item.price}
+            priceChange={item.priceChange}
+            priceChangePercentage={item.priceChangePercentage}
+            ticker={item.ticker}
+          />
+        )}
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-});

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { PaperProvider, TextInput } from "react-native-paper";
 import { createContext } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { theme } from "@/theme";
 import { SearchableStock } from "@/data";
@@ -54,16 +55,45 @@ export const StoreContext = createContext<{
   setSearchQuery: (text: string) => void;
   searchedStocks: SearchableStock[];
   setSearchedStocks: (stocks: SearchableStock[]) => void;
+  likedStocks: string[];
+  updateLikedStocks: (ticker: string, op: "add" | "del") => void;
 }>({
   searchQuery: "",
   setSearchQuery: () => {},
   searchedStocks: [],
   setSearchedStocks: () => {},
+  likedStocks: [],
+  updateLikedStocks: () => {},
 });
 
 function RootLayoutNav() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedStocks, setSearchedStocks] = useState<SearchableStock[]>([]);
+  const [likedStocks, setLikedStocks] = useState<string[]>([]);
+
+  const updateLikedStocks = async (ticker: string, op: "add" | "del") => {
+    const prevStocks = [...likedStocks];
+    const newStocks =
+      op === "del"
+        ? prevStocks.filter((symbol) => symbol !== ticker)
+        : [ticker, ...prevStocks];
+
+    try {
+      await AsyncStorage.setItem("watchlist", JSON.stringify(newStocks));
+      setLikedStocks(newStocks);
+    } catch (error) {
+      setLikedStocks(prevStocks);
+    }
+  };
+
+  useEffect(() => {
+    async function getLikedStocks() {
+      const stocks = await AsyncStorage.getItem("watchlist");
+      if (stocks) setLikedStocks(JSON.parse(stocks));
+    }
+
+    getLikedStocks();
+  }, []);
 
   return (
     <PaperProvider theme={theme}>
@@ -74,6 +104,8 @@ function RootLayoutNav() {
             setSearchQuery,
             searchedStocks,
             setSearchedStocks,
+            likedStocks,
+            updateLikedStocks,
           }}
         >
           <Stack>
